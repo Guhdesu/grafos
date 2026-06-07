@@ -1,11 +1,13 @@
 #include <stdio.h>
 
 // Busca em Largura (BFS)
-// Faz a busca usando uma fila (vetor com inicio e fim)
+// Le um grafo do usuario (matriz de adjacencia) e faz a busca usando uma fila
 
 #define MAX 50
 
-int visitado[MAX]; // marca quem ja foi visitado
+int grafo[MAX][MAX]; // matriz de adjacencia
+int visitado[MAX];   // marca quem ja foi visitado
+int n;               // numero de vertices
 
 int fila[MAX];
 int inicio = 0, fim = 0;
@@ -29,7 +31,7 @@ int filaVazia() {
     }
 }
 
-void bfs(int grafo[MAX][MAX], int n, int origem) {
+void bfs(int origem) {
     int i, atual;
 
     // marca a origem como visitada e coloca na fila
@@ -54,26 +56,31 @@ void bfs(int grafo[MAX][MAX], int n, int origem) {
 }
 
 int main() {
-    int n = 6;
+    int i, j;
+    int origem;
 
-    // grafo de exemplo (matriz de adjacencia)
-    //      0  1  2  3  4  5
-    int grafo[MAX][MAX] = {
-        {0, 1, 1, 0, 0, 0}, // 0
-        {1, 0, 0, 1, 1, 0}, // 1
-        {1, 0, 0, 0, 1, 0}, // 2
-        {0, 1, 0, 0, 0, 1}, // 3
-        {0, 1, 1, 0, 0, 1}, // 4
-        {0, 0, 0, 1, 1, 0}  // 5
-    };
+    printf("Digite o numero de vertices: ");
+    scanf("%d", &n);
 
-    int i;
+    // zera tudo antes de comecar
     for (i = 0; i < n; i++) {
         visitado[i] = 0;
+        for (j = 0; j < n; j++) {
+            grafo[i][j] = 0;
+        }
     }
 
-    printf("Busca em Largura a partir do vertice 0\n");
-    bfs(grafo, n, 0);
+    printf("Digite a matriz de adjacencia (%d x %d, use 0 ou 1):\n", n, n);
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            scanf("%d", &grafo[i][j]);
+        }
+    }
+
+    printf("Digite o vertice de origem: ");
+    scanf("%d", &origem);
+
+    bfs(origem);
 
     return 0;
 }

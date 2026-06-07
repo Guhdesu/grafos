@@ -1,16 +1,20 @@
 #include <stdio.h>
 
 // Algoritmo de Dijkstra
-// Acha o menor caminho de um vertice de origem para todos os outros
+// Le um grafo ponderado (pesos nao negativos) do usuario e acha o caminho minimo
+// de um vertice de origem ate todos os outros
 
 #define MAX 50
 #define INFINITO 99999 // representa "sem caminho"
 
-int dist[MAX];     // menor distancia ate cada vertice
-int visitado[MAX]; // marca quem ja foi fechado
+int grafo[MAX][MAX]; // matriz de adjacencia com os pesos (0 = sem aresta)
+int dist[MAX];       // menor distancia ate cada vertice
+int visitado[MAX];   // marca quem ja foi fechado
+int anterior[MAX];   // de qual vertice eu vim (serve para montar o caminho)
+int n;               // numero de vertices
 
 // procura o vertice ainda nao visitado com a menor distancia
-int menorDistancia(int n) {
+int menorDistancia() {
     int i;
     int menor = INFINITO;
     int indice = -1;
@@ -24,13 +28,25 @@ int menorDistancia(int n) {
     return indice;
 }
 
-void dijkstra(int grafo[MAX][MAX], int n, int origem) {
+// imprime o caminho da origem ate v
+// vai de tras pra frente usando o vetor anterior[], por isso eh recursivo
+void imprimeCaminho(int v) {
+    if (anterior[v] == -1) {
+        printf("%d", v); // chegou na origem, nao tem mais de onde veio
+        return;
+    }
+    imprimeCaminho(anterior[v]);
+    printf(" -> %d", v);
+}
+
+void dijkstra(int origem) {
     int i, count, u;
 
-    // no inicio todas as distancias sao infinito
+    // no inicio todas as distancias sao infinito e ninguem tem "anterior"
     for (i = 0; i < n; i++) {
         dist[i] = INFINITO;
         visitado[i] = 0;
+        anterior[i] = -1;
     }
 
     // a distancia da origem para ela mesma eh 0
@@ -38,7 +54,7 @@ void dijkstra(int grafo[MAX][MAX], int n, int origem) {
 
     // precisa fechar n vertices
     for (count = 0; count < n; count++) {
-        u = menorDistancia(n);
+        u = menorDistancia();
 
         if (u == -1) {
             break; // nao tem mais como chegar em ninguem
@@ -51,37 +67,46 @@ void dijkstra(int grafo[MAX][MAX], int n, int origem) {
             if (grafo[u][i] != 0 && visitado[i] == 0) {
                 if (dist[u] + grafo[u][i] < dist[i]) {
                     dist[i] = dist[u] + grafo[u][i];
+                    anterior[i] = u; // o melhor jeito de chegar em i eh passando por u
                 }
             }
         }
     }
 
-    // mostra o resultado
-    printf("Vertice\tDistancia da origem\n");
+    // mostra o resultado: distancia e o caminho percorrido
+    printf("\nResultado a partir do vertice %d:\n", origem);
     for (i = 0; i < n; i++) {
+        if (i == origem) {
+            continue; // nao precisa mostrar a origem para ela mesma
+        }
         if (dist[i] == INFINITO) {
-            printf("%d\tsem caminho\n", i);
+            printf("Vertice %d: sem caminho\n", i);
         } else {
-            printf("%d\t%d\n", i, dist[i]);
+            printf("Vertice %d: distancia = %d, caminho: ", i, dist[i]);
+            imprimeCaminho(i);
+            printf("\n");
         }
     }
 }
 
 int main() {
-    int n = 6;
+    int i, j;
+    int origem;
 
-    // grafo de exemplo com pesos (0 = sem aresta)
-    int grafo[MAX][MAX] = {
-        {0, 7, 9, 0, 0, 14}, // 0
-        {7, 0, 10, 15, 0, 0}, // 1
-        {9, 10, 0, 11, 0, 2}, // 2
-        {0, 15, 11, 0, 6, 0}, // 3
-        {0, 0, 0, 6, 0, 9},   // 4
-        {14, 0, 2, 0, 9, 0}   // 5
-    };
+    printf("Digite o numero de vertices: ");
+    scanf("%d", &n);
 
-    printf("Dijkstra a partir do vertice 0\n");
-    dijkstra(grafo, n, 0);
+    printf("Digite a matriz de adjacencia com os pesos (%d x %d, 0 = sem aresta):\n", n, n);
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            scanf("%d", &grafo[i][j]);
+        }
+    }
+
+    printf("Digite o vertice de origem: ");
+    scanf("%d", &origem);
+
+    dijkstra(origem);
 
     return 0;
 }

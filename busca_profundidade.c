@@ -1,13 +1,15 @@
 #include <stdio.h>
 
 // Busca em Profundidade (DFS)
-// Feita de forma recursiva
+// Le um grafo do usuario (matriz de adjacencia) e faz a busca de forma recursiva
 
 #define MAX 50
 
-int visitado[MAX]; // marca quem ja foi visitado
+int grafo[MAX][MAX]; // matriz de adjacencia
+int visitado[MAX];   // marca quem ja foi visitado
+int n;               // numero de vertices
 
-void dfs(int grafo[MAX][MAX], int n, int v) {
+void dfs(int v) {
     int i;
 
     // visita o vertice atual
@@ -17,32 +19,38 @@ void dfs(int grafo[MAX][MAX], int n, int v) {
     // vai fundo em cada vizinho que ainda nao visitou
     for (i = 0; i < n; i++) {
         if (grafo[v][i] == 1 && visitado[i] == 0) {
-            dfs(grafo, n, i);
+            dfs(i);
         }
     }
 }
 
 int main() {
-    int n = 6;
+    int i, j;
+    int origem;
 
-    // grafo de exemplo (matriz de adjacencia)
-    int grafo[MAX][MAX] = {
-        {0, 1, 1, 0, 0, 0}, // 0
-        {1, 0, 0, 1, 1, 0}, // 1
-        {1, 0, 0, 0, 1, 0}, // 2
-        {0, 1, 0, 0, 0, 1}, // 3
-        {0, 1, 1, 0, 0, 1}, // 4
-        {0, 0, 0, 1, 1, 0}  // 5
-    };
+    printf("Digite o numero de vertices: ");
+    scanf("%d", &n);
 
-    int i;
+    // zera tudo antes de comecar
     for (i = 0; i < n; i++) {
         visitado[i] = 0;
+        for (j = 0; j < n; j++) {
+            grafo[i][j] = 0;
+        }
     }
 
-    printf("Busca em Profundidade a partir do vertice 0\n");
+    printf("Digite a matriz de adjacencia (%d x %d, use 0 ou 1):\n", n, n);
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            scanf("%d", &grafo[i][j]);
+        }
+    }
+
+    printf("Digite o vertice de origem: ");
+    scanf("%d", &origem);
+
     printf("Ordem da visita: ");
-    dfs(grafo, n, 0);
+    dfs(origem);
     printf("\n");
 
     return 0;

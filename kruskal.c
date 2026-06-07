@@ -1,7 +1,8 @@
 #include <stdio.h>
 
 // Algoritmo de Kruskal
-// Acha a Arvore Geradora Minima ordenando as arestas pelo peso
+// Le um grafo nao direcionado e ponderado do usuario (lista de arestas)
+// e acha a Arvore Geradora Minima ordenando as arestas pelo peso
 
 #define MAX 50
 
@@ -12,7 +13,8 @@ struct Aresta {
     int peso;
 };
 
-int pai[MAX]; // vetor para o union-find (saber a "raiz" de cada vertice)
+struct Aresta arestas[MAX]; // lista de arestas do grafo
+int pai[MAX];               // vetor para o union-find (saber a "raiz" de cada vertice)
 
 // acha a raiz do conjunto do vertice x
 int encontrar(int x) {
@@ -30,23 +32,20 @@ void unir(int a, int b) {
 }
 
 int main() {
-    int n = 6; // numero de vertices
-
-    // lista de arestas do grafo (origem, destino, peso)
-    struct Aresta arestas[] = {
-        {0, 1, 7},
-        {0, 2, 9},
-        {0, 5, 14},
-        {1, 2, 10},
-        {1, 3, 15},
-        {2, 3, 11},
-        {2, 5, 2},
-        {3, 4, 6},
-        {4, 5, 9}
-    };
-
-    int m = 9; // quantidade de arestas
+    int n; // numero de vertices
+    int m; // numero de arestas
     int i, j;
+
+    printf("Digite o numero de vertices: ");
+    scanf("%d", &n);
+
+    printf("Digite o numero de arestas: ");
+    scanf("%d", &m);
+
+    printf("Digite cada aresta (origem destino peso):\n");
+    for (i = 0; i < m; i++) {
+        scanf("%d %d %d", &arestas[i].origem, &arestas[i].destino, &arestas[i].peso);
+    }
 
     // ordena as arestas pelo peso (bubble sort mesmo)
     for (i = 0; i < m - 1; i++) {
@@ -66,15 +65,14 @@ int main() {
 
     int total = 0; // peso total da arvore
 
-    printf("Algoritmo de Kruskal\n");
-    printf("Arestas da Arvore Geradora Minima:\n");
+    printf("\nArestas da Arvore Geradora Minima:\n");
 
     // vai pegando as arestas em ordem, desde que nao forme ciclo
     for (i = 0; i < m; i++) {
         int u = arestas[i].origem;
         int v = arestas[i].destino;
 
-        // so adiciona se estiverem em conjuntos diferentes
+        // so adiciona se estiverem em conjuntos diferentes (senao formaria ciclo)
         if (encontrar(u) != encontrar(v)) {
             printf("%d - %d  (peso %d)\n", u, v, arestas[i].peso);
             total = total + arestas[i].peso;
